@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,7 +7,7 @@ using Unity.Netcode.Transports.UNET;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LobbyScene : MonoBehaviour
+public class LobbyScene : NetworkBehaviour
 {
 	#region Fields
 	[Header("UI")]
@@ -27,6 +28,7 @@ public class LobbyScene : MonoBehaviour
 
 	//Private fields
 	bool connected;
+	bool waitingClientDisconnect;
 	float logClearTime;
 
 	//Properties
@@ -38,24 +40,13 @@ public class LobbyScene : MonoBehaviour
 
 	#endregion
 
-	////Singleton
-	//private static LobbyScene _singleton;
-	//public static LobbyScene singleton { get { return _singleton; } }
-	//void Awake()
-	//{
-	//	if (_singleton != null && _singleton != this)
-	//		Destroy(gameObject);
-
-	//	_singleton = this;
-	//}
-
 	private void Start()
 	{
 		logMessage = "Log messages will be displayed here...";
 		playersConnected.value = 0;
-		NetworkManager.Singleton.OnClientConnectedCallback += Singleton_OnClientConnectedCallback;
-		NetworkManager.Singleton.OnClientDisconnectCallback += Singleton_OnClientDisconnectCallback;
-		NetworkManager.Singleton.OnServerStarted += Singleton_OnServerStarted;
+		NetworkManager.OnClientConnectedCallback += Singleton_OnClientConnectedCallback;
+		NetworkManager.OnClientDisconnectCallback += Singleton_OnClientDisconnectCallback;
+		NetworkManager.OnServerStarted += Singleton_OnServerStarted;
 	}
 
 	#region EVENTS
@@ -66,13 +57,14 @@ public class LobbyScene : MonoBehaviour
 
 	private void Singleton_OnClientConnectedCallback(ulong obj)
 	{
-		if (NetworkManager.Singleton.LocalClientId == obj)
+		//CONNECTION SUCCESS
+		if (NetworkManager.LocalClientId == obj)
 		{
 			connected = true;
 			lobbyUI.MoveToLobby();
 			logMessage = "Connected to host!";
 		}
-		if (NetworkManager.Singleton.IsHost)
+		if (NetworkManager.IsHost)
 		{
 			playersConnected.value++;
 		}
@@ -82,18 +74,18 @@ public class LobbyScene : MonoBehaviour
 	private void Singleton_OnClientDisconnectCallback(ulong obj)
 	{
 		logMessage = $"{obj} disconnected";
-		if (NetworkManager.Singleton.LocalClientId == obj)
+		if (NetworkManager.LocalClientId == obj)
 		{
 			connected = false;
 		}
-		if (NetworkManager.Singleton.ServerClientId == obj)
-		{
-			logMessage = "Host disconnected, closing connection...";
-			LobbyBackButton();
-		}
-		if (NetworkManager.Singleton.IsHost)
+		if (IsHost)
 		{
 			playersConnected.value--;
+			if (waitingClientDisconnect)
+			{
+				lobbyUI.MoveToLobby();
+				NetworkManager.Shutdown();
+			}
 		}
 	}
 	#endregion
@@ -101,19 +93,20 @@ public class LobbyScene : MonoBehaviour
 	#region Buttons
 	public void MainHostButton()
 	{
-		NetworkManager.Singleton.GetComponent<UNetTransport>().ServerListenPort = int.Parse(string.IsNullOrEmpty(portInputField.text) ? "7777" : portInputField.text);
-		if (!NetworkManager.Singleton.StartHost())
+		waitingClientDisconnect = false;
+		NetworkManager.GetComponent<UNetTransport>().ServerListenPort = int.Parse(string.IsNullOrEmpty(portInputField.text) ? "7777" : portInputField.text);
+		if (!NetworkManager.StartHost())
 		{
 			Debug.Log("Could not start host...");
-			NetworkManager.Singleton.Shutdown();
+			NetworkManager.Shutdown();
 		}
 	}
 
 	public void MainJoinButton()
 	{
-		NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = string.IsNullOrEmpty(ipInputField.text) ? "127.0.0.1" : ipInputField.text;
-		NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectPort = int.Parse(string.IsNullOrEmpty(portInputField.text) ? "7777" : portInputField.text);
-		if (NetworkManager.Singleton.StartClient())
+		NetworkManager.GetComponent<UNetTransport>().ConnectAddress = string.IsNullOrEmpty(ipInputField.text) ? "127.0.0.1" : ipInputField.text;
+		NetworkManager.GetComponent<UNetTransport>().ConnectPort = int.Parse(string.IsNullOrEmpty(portInputField.text) ? "7777" : portInputField.text);
+		if (NetworkManager.StartClient())
 		{
 			logMessage = "Connecting to Host...";
 			StartCoroutine(ConnectionTimeout());
@@ -121,35 +114,65 @@ public class LobbyScene : MonoBehaviour
 		else
 		{
 			logMessage = "Could not start client...";
-			NetworkManager.Singleton.Shutdown();
+			NetworkManager.Shutdown();
 		}
 	}
 
-
 	public void LobbyBackButton()
 	{
-		lobbyUI.MoveToLobby();
 		playersConnected.value = 0;
-		ShutdownServerRpc();
+		if (IsHost)
+		{
+			DisconnectClientRpc();
+		}
+		else
+		{
+			NetworkManager.Shutdown();
+			lobbyUI.MoveToLobby();
+		}
+	}
+
+	public void TESTRpcClient()
+	{
+		TestClientRpc();
 	}
 
 	public void LobbyStartButton()
 	{
 		StopAllCoroutines();
-		NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+		NetworkManager.SceneManager.LoadScene("Game", LoadSceneMode.Single);
 	}
 	#endregion
 
 	#region RPC
-	[ServerRpc]
-	void ShutdownServerRpc()
+
+	[ClientRpc]
+	void TestClientRpc()
 	{
-		if (NetworkManager.Singleton.IsHost)
+		if (IsHost)
 		{
-			logMessage = "Host disconnected";
+			waitingClientDisconnect = true;
 		}
-		logMessage = "Shutting down connection.";
-		NetworkManager.Singleton.Shutdown();
+		else
+		{
+			//logMessage = $"TestClientRpc executed on client {NetworkManager.LocalClientId}";
+			//logMessage = "Host disconnected";
+			lobbyUI.MoveToLobby();
+			NetworkManager.Shutdown();
+		}
+	}
+
+	[ClientRpc]
+	private void DisconnectClientRpc()
+	{
+		if (IsHost)
+		{
+			waitingClientDisconnect = true;
+			return;
+		}
+		logMessage = "Host disconnected";
+		lobbyUI.MoveToLobby();
+		NetworkManager.Shutdown();
 	}
 	#endregion
 
@@ -160,7 +183,7 @@ public class LobbyScene : MonoBehaviour
 		if (!connected)
 		{
 			logMessage = "Could not connect to host check the IP and port fields, and check host has forwarded the port.";
-			NetworkManager.Singleton.Shutdown();
+			NetworkManager.Shutdown();
 		}
 	}
 

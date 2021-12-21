@@ -33,4 +33,9 @@ public class DiscordController : MonoBehaviour
     {
         discord.RunCallbacks();
     }
+
+	private void OnApplicationQuit()
+	{
+        discord.GetActivityManager().ClearActivity((res) => Debug.Log(res.ToString()));
+    }
 }
