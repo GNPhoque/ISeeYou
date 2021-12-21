@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db87977c0efc44748a64c02f924f1242, type: 3}
+  m_Name: Inputs
+  m_EditorClassIdentifier: 
+  movement: {x: 0, y: 0}
+  rotation: {x: 0, y: 0}
+  use: 0
+  useDown: 0
+  useUp: 0
+  jump: 0
+  jumpDown: 0
+  jumpUp: 0
