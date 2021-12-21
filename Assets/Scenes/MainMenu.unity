@@ -97,8 +97,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 68d3b55be4b590a4e898fcfd8e97a1f9, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 580f8218b3ccfe7439256ce08ac535c9, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -2418,7 +2418,7 @@ GameObject:
   - component: {fileID: 1207483440}
   m_Layer: 0
   m_Name: LobbySceneManager
-  m_TagString: Untagged
+  m_TagString: SceneManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

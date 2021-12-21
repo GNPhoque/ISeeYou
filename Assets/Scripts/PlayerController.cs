@@ -19,14 +19,25 @@ public class PlayerController : NetworkBehaviour
 	float spawnZRange;
 
 	//Private Fields
+	NetworkBehaviour sceneManager;
 	Transform playerListContainer;
 	GameObject playerListItem;
 
 	private void Start()
 	{
+		NetworkManager.SceneManager.OnLoadComplete += SceneManager_OnLoadComplete;
 		transform.position = new Vector3(Random.Range(-spawnXRange, spawnXRange), 0f, Random.Range(-spawnZRange, spawnZRange));
 		playerListContainer = GameObject.FindGameObjectWithTag("PlayerListContainer").transform;
 		playerListItem = Instantiate(playerListItemPrefab, playerListContainer);
+	}
+
+	private void SceneManager_OnLoadComplete(ulong clientId, string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+	{
+		if (sceneName == "Game")
+		{
+			sceneManager = GameObject.FindGameObjectWithTag("SceneManager").GetComponent<NetworkBehaviour>();
+			transform.position = ((GameScene)sceneManager).GetSpawnPoint().position;
+		}
 	}
 
 	private void Update()

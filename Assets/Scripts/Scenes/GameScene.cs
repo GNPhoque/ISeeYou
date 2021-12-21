@@ -1,18 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class GameScene : MonoBehaviour
+public class GameScene : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	[SerializeField]
+	Transform spawnPointHost;
+	[SerializeField]
+	Transform spawnPointClient;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	public Transform GetSpawnPoint()
+	{
+		return IsHost ? spawnPointHost : spawnPointClient;
+	}
 }
