@@ -177,4 +177,5 @@ MonoBehaviour:
   rb: {fileID: 608513988099331966}
   spawnXRange: 4
   spawnZRange: 4
-  speed: 3.5
+  moveSpeed: 3.5
+  rotationSpeed: 90
