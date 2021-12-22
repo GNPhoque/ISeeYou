@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 872383306
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
@@ -173,5 +173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerListItemPrefab: {fileID: 4653355249883092282, guid: 87dc5f1d342243a4da04719d35e5e7d1, type: 3}
   inputs: {fileID: 11400000, guid: 3dd452e157f60a447ba7d23b07126a2f, type: 2}
+  t: {fileID: 2966114789767644494}
+  rb: {fileID: 608513988099331966}
   spawnXRange: 4
   spawnZRange: 4
+  speed: 3.5
