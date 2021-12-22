@@ -2,8 +2,12 @@ using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Samples;
 using UnityEngine;
 
+[RequireComponent(typeof(NetworkObject))]
+[RequireComponent(typeof(ClientNetworkTransform))]
+[RequireComponent(typeof(PlayerInteraction))]
 public class PlayerController : NetworkBehaviour
 {
 	[SerializeField]
@@ -55,15 +59,12 @@ public class PlayerController : NetworkBehaviour
 
 	private void FixedUpdate()
 	{
-		if (IsOwner) //move
+		if (IsOwner)
 		{
 			if (canMove && inputs.movement != Vector2.zero)
 			{
 				Move();
-
-				Vector3 cameraForward = Camera.main.transform.forward;
-				cameraForward = new Vector3(cameraForward.x, 0f, cameraForward.z);
-				rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(cameraForward), rotationSpeed));
+				RotateTowardsCameraForward();
 			}
 		}
 	}
@@ -75,6 +76,13 @@ public class PlayerController : NetworkBehaviour
 		Vector3 move = moveX + moveZ;
 		rb.velocity = new Vector3(move.x, rb.velocity.y, move.z);
 		//rb.velocity = new Vector3(inputs.movement.x * moveSpeed, rb.velocity.y, inputs.movement.y * moveSpeed); //OLD VERSION WITHOUT FORWARD
+	}
+
+	private void RotateTowardsCameraForward()
+	{
+		Vector3 cameraForward = Camera.main.transform.forward;
+		cameraForward = new Vector3(cameraForward.x, 0f, cameraForward.z);
+		rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(cameraForward), rotationSpeed));
 	}
 
 	private void OnDestroy()
