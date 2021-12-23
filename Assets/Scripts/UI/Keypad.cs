@@ -1,15 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
+using Cinemachine;
 
 public class Keypad : MonoBehaviour
 {
+	[Header("Events")]
 	[SerializeField]
 	UnityEvent OnSuccess;
 	[SerializeField]
 	UnityEvent OnFail;
+
+	[Header("Audio")]
 	[SerializeField]
 	AudioSource source;
 	[SerializeField]
@@ -19,12 +24,19 @@ public class Keypad : MonoBehaviour
 	[SerializeField]
 	AudioClip incorrect;
 
+	//Private Fields
+	CinemachineBrain camBrain;
+	InputsManager inputsManager;
+	GameObject crosshair;
+
     string secretCode;
     string code;
 	bool isActive;
+	bool success;
 
 	private void Start()
 	{
+		SetReferences();
 		code = "";
 	}
 
@@ -36,9 +48,24 @@ public class Keypad : MonoBehaviour
 
 	public void SetSecretCode(string secret)
 	{
+		SetReferences();
+
+		code = "";
 		secretCode = secret;
+		success = false;
 		isActive = true;
+
+		camBrain.enabled = false;
+		inputsManager.enabled = false;
+		crosshair.SetActive(false);
 		gameObject.SetActive(true);
+	}
+
+	private void SetReferences()
+	{
+		if (!camBrain) camBrain = Camera.main.GetComponent<CinemachineBrain>();
+		if (!inputsManager) inputsManager = NetworkManager.Singleton.gameObject.GetComponent<InputsManager>();
+		if (!crosshair) crosshair = GameObject.FindGameObjectWithTag("Crosshair");
 	}
 
 	public void OnButtonPress(int button)
@@ -67,9 +94,8 @@ public class Keypad : MonoBehaviour
 	{
 		if (code == secretCode)
 		{
+			success = true;
 			PlaySound("Correct");
-			OnSuccess?.Invoke();
-			gameObject.SetActive(false);
 		}
 		else
 		{
@@ -84,14 +110,41 @@ public class Keypad : MonoBehaviour
 		switch (sound)
 		{
 			case "Correct":
-				source.PlayOneShot(correct);
+				source.clip = correct;
+				//source.PlayOneShot(correct);
+				StartCoroutine("WaitEndSound");
 				break;
 			case "Incorrect":
-				source.PlayOneShot(incorrect);
+				source.clip = incorrect;
+				//source.PlayOneShot(incorrect);
+				StartCoroutine("WaitEndSound");
 				break;
 			default:
-				source.PlayOneShot(bip);
+				source.clip = bip;
+				//source.PlayOneShot(bip);
+				StartCoroutine("WaitEndSound");
 				break;
 		}
+	}
+
+	IEnumerator WaitEndSound()
+	{
+		source.Play();
+		yield return new WaitForSeconds(source.clip.length);
+		if (success)
+		{
+			OnSuccess?.Invoke();
+			Exit();
+		}
+	}
+
+	public void Exit()
+	{
+		isActive = false;
+
+		camBrain.enabled = true;
+		inputsManager.enabled = true;
+		crosshair.SetActive(true);
+		gameObject.SetActive(false);
 	}
 }

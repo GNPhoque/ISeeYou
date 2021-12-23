@@ -21,4 +21,17 @@ public class PinpadActivator : Useable
 		}
 		OnUsed?.Invoke();
 	}
+
+	public void ClearAllEvents()
+	{
+		onSuccess = null;
+		onFail = null;
+		OnUnused = null;
+		OnUsed = null;
+	}
+
+	public void ClearOnSuccessEvents()
+	{
+		onSuccess = null;
+	}
 }

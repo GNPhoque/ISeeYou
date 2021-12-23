@@ -160,7 +160,7 @@ public class PlayerInteraction : MonoBehaviour
 
 	void ChangeCrosshairState()
 	{
-		if (isCrosshairSet)
+		if (crosshair && crosshair.IsActive())
 		{
 			if (target != null)
 			{

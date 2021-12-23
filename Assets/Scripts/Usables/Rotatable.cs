@@ -56,6 +56,11 @@ public class Rotatable : Useable
 		}
 	}
 
+	public void Unlock()
+	{
+		isLocked = false;
+	}
+
 	//private void OnCollisionEnter(Collision collision)
 	//{
 	//	if (state == UsableState.Using && collision.transform.CompareTag("Player"))
