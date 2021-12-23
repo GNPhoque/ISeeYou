@@ -26,13 +26,19 @@ public class Keypad : MonoBehaviour
 	private void Start()
 	{
 		code = "";
-		SetSecretCode("0000");
+	}
+
+	public void SetEvents(UnityEvent success, UnityEvent fail)
+	{
+		OnSuccess = success;
+		OnFail = fail;
 	}
 
 	public void SetSecretCode(string secret)
 	{
 		secretCode = secret;
 		isActive = true;
+		gameObject.SetActive(true);
 	}
 
 	public void OnButtonPress(int button)
@@ -63,6 +69,7 @@ public class Keypad : MonoBehaviour
 		{
 			PlaySound("Correct");
 			OnSuccess?.Invoke();
+			gameObject.SetActive(false);
 		}
 		else
 		{
