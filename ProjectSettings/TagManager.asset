@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayerListContainer
   - SceneManager
+  - Crosshair
   layers:
   - Default
   - TransparentFX

@@ -18,22 +18,12 @@ public abstract class Useable : MonoBehaviour, IUseable
 	[SerializeField]
 	protected UnityEvent OnUnused;
 
-	protected UsableState state;
+	protected UsableState state = UsableState.NotUsed;
 	protected Transform t;
 
 	protected virtual void Awake()
 	{
 		t = GetComponent<Transform>();
-	}
-
-	public virtual void Use(GameObject source = null)
-	{
-		Use();
-	}
-
-	public virtual void LongUse(GameObject source = null)
-	{
-		Use();
 	}
 
 	public abstract void Use();

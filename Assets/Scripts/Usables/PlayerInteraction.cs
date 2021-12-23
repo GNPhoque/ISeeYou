@@ -16,16 +16,16 @@ public class PlayerInteraction : MonoBehaviour
 	[SerializeField]
 	float longUseDelay;
 	[SerializeField]
-	Image crosshair;
-	[SerializeField]
 	LayerMask IUsableMask;
 	[SerializeField]
 	CancelUseable cancelable;
 
+	Image crosshair;
 	Useable _target;
 	Useable tmpTarget;
 	float useDownTime;
-	bool usingCancel;
+	bool canceling;
+	bool isCrosshairSet;
 
 	Useable target { get => _target; set { _target = value; ChangeCrosshairState(); } }
 
@@ -59,9 +59,9 @@ public class PlayerInteraction : MonoBehaviour
 		//Checking for long press
 		if (useDownTime >= 0f)
 		{
-			if (usingCancel)
+			if (canceling)
 			{
-				OnUseCancelable();
+				Cancel();
 			}
 			else if (tmpTarget != null)
 			{
@@ -80,24 +80,24 @@ public class PlayerInteraction : MonoBehaviour
 		}
 	}
 
-	void OnUseCancelable()
+	void Cancel()
 	{
 		//Use btn up : quick use
 		if (inputs.useUp)
 		{
+			cancelable.Use(gameObject);
 			useDownTime = -1f;
 			cancelable = null;
-			usingCancel = false;
-			cancelable.Use();
+			canceling = false;
 			return;
 		}
 		//Holding longer than delay : LongUse
 		else if (useDownTime > longUseDelay)
 		{
+			cancelable.LongUse(gameObject);
 			useDownTime = -1f;
 			cancelable = null;
-			usingCancel = false;
-			cancelable.LongUse();
+			canceling = false;
 			return;
 		}
 	}
@@ -111,9 +111,12 @@ public class PlayerInteraction : MonoBehaviour
 			useDownTime = -1f;
 			if (tmpTarget is CancelUseable)
 			{
-				if (((CancelUseable)tmpTarget).Getstate() != UsableState.NotUsed)
-					cancelable = null;
-				else cancelable = (CancelUseable)tmpTarget;
+				cancelable = ((CancelUseable)tmpTarget).Getstate() == UsableState.NotUsed ? (CancelUseable)tmpTarget : null;
+				if (tmpTarget is UseablePositionChange)
+				{
+					((CancelUseable)tmpTarget).Use(gameObject);
+					return;
+				}
 			}
 			tmpTarget.Use();
 		}
@@ -123,9 +126,12 @@ public class PlayerInteraction : MonoBehaviour
 			useDownTime = -1f;
 			if (tmpTarget is CancelUseable)
 			{
-				if (((CancelUseable)tmpTarget).Getstate() == UsableState.Used)
-					cancelable = null;
-				else cancelable = (CancelUseable)tmpTarget;
+				cancelable = ((CancelUseable)tmpTarget).Getstate() == UsableState.NotUsed ? (CancelUseable)tmpTarget : null;
+				if (tmpTarget is UseablePositionChange)
+				{
+					((CancelUseable)tmpTarget).LongUse(gameObject);
+					return;
+				}
 			}
 			tmpTarget.LongUse();
 		}
@@ -148,19 +154,28 @@ public class PlayerInteraction : MonoBehaviour
 				return;
 			}
 			useDownTime = 0f;
-			usingCancel = true;
+			canceling = true;
 		}
 	}
 
 	void ChangeCrosshairState()
 	{
-		if (target != null)
+		if (isCrosshairSet)
 		{
-			crosshair.material.color = Color.red;
+			if (target != null)
+			{
+				crosshair.material.color = Color.red;
+			}
+			else
+			{
+				crosshair.material.color = Color.white;
+			} 
 		}
-		else
-		{
-			crosshair.material.color = Color.white;
-		}
+	}
+
+	public void SetCrosshair()
+	{
+		crosshair = GameObject.FindGameObjectWithTag("Crosshair").GetComponent<Image>();
+		isCrosshairSet = true;
 	}
 }

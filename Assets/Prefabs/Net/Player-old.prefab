@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5319336055055406557}
   - component: {fileID: 5876009500815159605}
   - component: {fileID: -6881591789781244879}
+  - component: {fileID: 5095447081651991352}
   m_Layer: 0
   m_Name: Player-old
   m_TagString: Player
@@ -173,9 +174,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerListItemPrefab: {fileID: 4653355249883092282, guid: 87dc5f1d342243a4da04719d35e5e7d1, type: 3}
   inputs: {fileID: 11400000, guid: 3dd452e157f60a447ba7d23b07126a2f, type: 2}
+  playerInteraction: {fileID: 5095447081651991352}
   t: {fileID: 2966114789767644494}
   rb: {fileID: 608513988099331966}
   spawnXRange: 4
   spawnZRange: 4
   moveSpeed: 3.5
   rotationSpeed: 90
+--- !u!114 &5095447081651991352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2252146110357142493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7b6537788d8fa741a7c774b40f355a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputs: {fileID: 11400000, guid: 3dd452e157f60a447ba7d23b07126a2f, type: 2}
+  maxDistance: 2
+  longUseDelay: 0.5
+  IUsableMask:
+    serializedVersion: 2
+    m_Bits: 8
+  cancelable: {fileID: 0}

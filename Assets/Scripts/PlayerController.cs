@@ -7,7 +7,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(NetworkObject))]
 [RequireComponent(typeof(ClientNetworkTransform))]
-[RequireComponent(typeof(PlayerInteraction))]
 public class PlayerController : NetworkBehaviour
 {
 	[SerializeField]
@@ -18,6 +17,8 @@ public class PlayerController : NetworkBehaviour
 	Inputs inputs;
 
 	[Header("Components")]
+	[SerializeField]
+	PlayerInteraction playerInteraction;
 	[SerializeField]
 	Transform t;
 	[SerializeField]
@@ -54,6 +55,7 @@ public class PlayerController : NetworkBehaviour
 			sceneManager = GameObject.FindGameObjectWithTag("SceneManager").GetComponent<NetworkBehaviour>();
 			t.position = ((GameScene)sceneManager).GetSpawnPoint().position;
 			if (IsOwner) Camera.main.GetComponent<CinemachineVirtualCamera>().Follow = t;
+			playerInteraction.SetCrosshair();
 		}
 	}
 

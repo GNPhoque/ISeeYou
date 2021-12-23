@@ -21,8 +21,8 @@ public class LobbyUI : MonoBehaviour
 
 	private void Start()
 	{
-		startButton.enabled = false;
-		playersConnected.onValueChanged += (int value) => { startButton.enabled = value == 2; };
+		//startButton.enabled = false;
+		//playersConnected.onValueChanged += (int value) => { startButton.enabled = value == 2; };
 	}
 
 	public void MoveToLobby()

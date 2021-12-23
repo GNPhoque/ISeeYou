@@ -9,8 +9,9 @@ public class Rotatable : Useable
 	Vector3 rotation;
 	[SerializeField]
 	float tweenDuration;
-
+	[SerializeField]
 	private bool isLocked;
+
 	private bool collided;
 
 	public override void Use()
@@ -39,7 +40,7 @@ public class Rotatable : Useable
 				state = UsableState.Using;
 				t.DORotate(-rotation, tweenDuration, RotateMode.LocalAxisAdd).onComplete = () =>
 				{
-					Debug.Log($"Rotation ended, collided = {collided}");
+					//Debug.Log($"Rotation ended, collided = {collided}");
 					if (collided)
 					{
 						collided = false;
@@ -55,11 +56,11 @@ public class Rotatable : Useable
 		}
 	}
 
-	private void OnCollisionEnter(Collision collision)
-	{
-		if (state == UsableState.Using && collision.transform.CompareTag("Player"))
-		{
-			collided = true;
-		}
-	}
+	//private void OnCollisionEnter(Collision collision)
+	//{
+	//	if (state == UsableState.Using && collision.transform.CompareTag("Player"))
+	//	{
+	//		collided = true;
+	//	}
+	//}
 }

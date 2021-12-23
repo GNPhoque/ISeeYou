@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 6325496755952160182}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,7 +109,6 @@ MonoBehaviour:
   inputs: {fileID: 11400000, guid: 3dd452e157f60a447ba7d23b07126a2f, type: 2}
   maxDistance: 2
   longUseDelay: 0.5
-  crosshair: {fileID: 0}
   IUsableMask:
     serializedVersion: 2
     m_Bits: 8
@@ -160,6 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerListItemPrefab: {fileID: 4653355249883092282, guid: 87dc5f1d342243a4da04719d35e5e7d1, type: 3}
   inputs: {fileID: 11400000, guid: 3dd452e157f60a447ba7d23b07126a2f, type: 2}
+  playerInteraction: {fileID: 8474103623980770431}
   t: {fileID: 8474103623980770417}
   rb: {fileID: 7710916351347648279}
   spawnXRange: 4
