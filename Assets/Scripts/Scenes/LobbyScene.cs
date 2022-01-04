@@ -16,17 +16,18 @@ public class LobbyScene : NetworkBehaviour
 	[SerializeField]
 	TMP_Text logText;
 	[SerializeField]
-	TMP_InputField ipInputField;
-	[SerializeField]
-	TMP_InputField portInputField;
+	TMP_InputField joinCodeInputField;
 	[SerializeField]
 	Transform playerListContainer;
+	[SerializeField]
+	RelayManager relayManager;
 
 	[Header("ScriptableObjects")]
 	[SerializeField]
 	IntVariable playersConnected;
 
 	//Private fields
+
 	bool connected;
 	bool waitingClientDisconnect;
 	float logClearTime;
@@ -91,10 +92,15 @@ public class LobbyScene : NetworkBehaviour
 	#endregion
 
 	#region Buttons
-	public void MainHostButton()
+	public async void MainHostButton()
 	{
 		waitingClientDisconnect = false;
-		NetworkManager.GetComponent<UNetTransport>().ServerListenPort = int.Parse(string.IsNullOrEmpty(portInputField.text) ? "7777" : portInputField.text);
+
+		if (relayManager.IsRelayEnabled)
+		{
+			await relayManager.SetupRelay();
+		}
+
 		if (!NetworkManager.StartHost())
 		{
 			Debug.Log("Could not start host...");
@@ -102,10 +108,14 @@ public class LobbyScene : NetworkBehaviour
 		}
 	}
 
-	public void MainJoinButton()
+	public async void MainJoinButton()
 	{
-		NetworkManager.GetComponent<UNetTransport>().ConnectAddress = string.IsNullOrEmpty(ipInputField.text) ? "127.0.0.1" : ipInputField.text;
-		NetworkManager.GetComponent<UNetTransport>().ConnectPort = int.Parse(string.IsNullOrEmpty(portInputField.text) ? "7777" : portInputField.text);
+
+		if (relayManager.IsRelayEnabled)
+		{
+			await relayManager.JoinRelay(joinCodeInputField.text);
+		}
+
 		if (NetworkManager.StartClient())
 		{
 			logMessage = "Connecting to Host...";
@@ -132,11 +142,6 @@ public class LobbyScene : NetworkBehaviour
 		}
 	}
 
-	public void TESTRpcClient()
-	{
-		TestClientRpc();
-	}
-
 	public void LobbyStartButton()
 	{
 		StopAllCoroutines();
@@ -145,23 +150,6 @@ public class LobbyScene : NetworkBehaviour
 	#endregion
 
 	#region RPC
-
-	[ClientRpc]
-	void TestClientRpc()
-	{
-		if (IsHost)
-		{
-			waitingClientDisconnect = true;
-		}
-		else
-		{
-			//logMessage = $"TestClientRpc executed on client {NetworkManager.LocalClientId}";
-			//logMessage = "Host disconnected";
-			lobbyUI.MoveToLobby();
-			NetworkManager.Shutdown();
-		}
-	}
-
 	[ClientRpc]
 	private void DisconnectClientRpc()
 	{

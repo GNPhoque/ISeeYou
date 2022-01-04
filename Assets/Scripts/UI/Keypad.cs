@@ -37,7 +37,7 @@ public class Keypad : MonoBehaviour
 	private void Start()
 	{
 		SetReferences();
-		code = "";
+		gameObject.SetActive(false);
 	}
 
 	public void SetEvents(UnityEvent success, UnityEvent fail)
@@ -48,8 +48,6 @@ public class Keypad : MonoBehaviour
 
 	public void SetSecretCode(string secret)
 	{
-		SetReferences();
-
 		code = "";
 		secretCode = secret;
 		success = false;
@@ -64,27 +62,25 @@ public class Keypad : MonoBehaviour
 	private void SetReferences()
 	{
 		if (!camBrain) camBrain = Camera.main.GetComponent<CinemachineBrain>();
-		if (!inputsManager) inputsManager = NetworkManager.Singleton.gameObject.GetComponent<InputsManager>();
 		if (!crosshair) crosshair = GameObject.FindGameObjectWithTag("Crosshair");
+		if (!inputsManager) inputsManager = NetworkManager.Singleton.gameObject.GetComponent<InputsManager>();
 	}
 
 	public void OnButtonPress(int button)
 	{
 		if (isActive)
 		{
+			PlaySound();
 			if (button == -1)//GREEN
 			{
-				PlaySound();
 				Invoke("PlayGreenSound", .25f);                
 			}
 			else if (button == -2)//RED
 			{
-				PlaySound();
 				code = "";
 			}
-			else
+			else//NUMBER
 			{
-				PlaySound();
 				code += button;
 			} 
 		}
@@ -111,17 +107,14 @@ public class Keypad : MonoBehaviour
 		{
 			case "Correct":
 				source.clip = correct;
-				//source.PlayOneShot(correct);
 				StartCoroutine("WaitEndSound");
 				break;
 			case "Incorrect":
 				source.clip = incorrect;
-				//source.PlayOneShot(incorrect);
 				StartCoroutine("WaitEndSound");
 				break;
 			default:
 				source.clip = bip;
-				//source.PlayOneShot(bip);
 				StartCoroutine("WaitEndSound");
 				break;
 		}
