@@ -87,7 +87,7 @@ public class PlayerController : NetworkBehaviour
 		rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(cameraForward), rotationSpeed));
 	}
 
-	private void OnDestroy()
+	public override void OnDestroy()
 	{
 		Destroy(playerListItem);
 	}

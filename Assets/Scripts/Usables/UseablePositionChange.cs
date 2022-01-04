@@ -7,7 +7,7 @@ public class UseablePositionChange : CancelUseable
 	[SerializeField]
 	Vector3 offset;
 	[SerializeField]
-	Collider collider;
+	new Collider collider;
 
 	GameObject target;
 	Vector3 positionBeforeChange;
