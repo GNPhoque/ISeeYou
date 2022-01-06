@@ -181,6 +181,7 @@ MonoBehaviour:
   spawnZRange: 4
   moveSpeed: 3.5
   rotationSpeed: 90
+  lobbyStartPosition: {x: -12, y: 11, z: -7}
 --- !u!114 &5095447081651991352
 MonoBehaviour:
   m_ObjectHideFlags: 0

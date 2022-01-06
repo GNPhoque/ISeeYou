@@ -8,6 +8,7 @@ TagManager:
   - SceneManager
   - Crosshair
   - GridCell
+  - SafetyNet
   layers:
   - Default
   - TransparentFX

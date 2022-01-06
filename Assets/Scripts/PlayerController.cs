@@ -33,17 +33,25 @@ public class PlayerController : NetworkBehaviour
 	float moveSpeed;
 	[SerializeField]
 	float rotationSpeed;
+	[SerializeField]
+	Vector3 lobbyStartPosition;
 
 	//Private Fields
 	GameObject playerListItem;
 	NetworkBehaviour sceneManager;
 	Transform playerListContainer;
+	Vector3 spawnPosition;
 	bool canMove = true;
 
 	private void Start()
 	{
 		NetworkManager.SceneManager.OnLoadComplete += SceneManager_OnLoadComplete;
-		t.position = new Vector3(Random.Range(-spawnXRange, spawnXRange), 4f, Random.Range(-spawnZRange, spawnZRange));
+		if (!IsHost)
+		{
+			lobbyStartPosition += new Vector3(4f, 0f, -3f);
+		}
+		spawnPosition = lobbyStartPosition;
+		t.position = spawnPosition;
 		playerListContainer = GameObject.FindGameObjectWithTag("PlayerListContainer").transform;
 		playerListItem = Instantiate(playerListItemPrefab, playerListContainer);
 	}
@@ -53,7 +61,8 @@ public class PlayerController : NetworkBehaviour
 		if (sceneName == "Game")
 		{
 			sceneManager = GameObject.FindGameObjectWithTag("SceneManager").GetComponent<NetworkBehaviour>();
-			t.position = ((GameScene)sceneManager).GetSpawnPoint().position;
+			spawnPosition = ((GameScene)sceneManager).GetSpawnPoint().position;
+			t.position = spawnPosition;
 			if (IsOwner) Camera.main.GetComponent<CinemachineVirtualCamera>().Follow = t;
 			playerInteraction.SetCrosshair();
 		}
@@ -90,5 +99,13 @@ public class PlayerController : NetworkBehaviour
 	public override void OnDestroy()
 	{
 		Destroy(playerListItem);
+	}
+
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag("SafetyNet"))
+		{
+			t.position = spawnPosition;
+		}
 	}
 }
