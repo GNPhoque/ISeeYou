@@ -11,6 +11,8 @@ public class LobbyUI : MonoBehaviour
 	[SerializeField]
 	RectTransform mainPanel;
 	[SerializeField]
+	GameObject settingsPanel;
+	[SerializeField]
 	Button startButton;
 	[SerializeField]
 	IntVariable playersConnected;
@@ -38,5 +40,15 @@ public class LobbyUI : MonoBehaviour
 			mainPanel.DOAnchorPos(new Vector2(-3000f, 0f), panelTransitionDuration);
 		}
 		isInLobby = !isInLobby;
+	}
+
+	public void SettingsButton()
+	{
+		settingsPanel.SetActive(!settingsPanel.activeSelf);
+	}
+
+	public void ExitButton()
+	{
+		Application.Quit();
 	}
 }

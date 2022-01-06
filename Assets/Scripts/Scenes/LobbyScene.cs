@@ -130,13 +130,13 @@ public class LobbyScene : NetworkBehaviour
 
 	public void LobbyBackButton()
 	{
-		playersConnected.value = 0;
 		if (IsHost)
 		{
 			DisconnectClientRpc();
 		}
 		else
 		{
+			playersConnected.value = 0;
 			NetworkManager.Shutdown();
 			lobbyUI.MoveToLobby();
 		}
@@ -155,8 +155,15 @@ public class LobbyScene : NetworkBehaviour
 	{
 		if (IsHost)
 		{
-			waitingClientDisconnect = true;
-			return;
+			if (playersConnected.value > 1)
+			{
+				waitingClientDisconnect = true;
+				return; 
+			}
+			else
+			{
+				playersConnected.value = 0;
+			}
 		}
 		logMessage = "Host disconnected";
 		lobbyUI.MoveToLobby();
