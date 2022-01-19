@@ -10,6 +10,7 @@ public class Lootable : Useable
 	public override void Use()
 	{
 		inventory.AddItem(gameObject.name);
+		OnUsed?.Invoke();
 		Destroy(gameObject);
 	}
 }

@@ -18,6 +18,8 @@ public class PlayerInteraction : MonoBehaviour
 	LayerMask IUsableMask;
 	[SerializeField]
 	CancelUseable cancelable;
+	[SerializeField]
+	Inventory inventory;
 
 	Image crosshair;
 	Useable _target;
@@ -35,6 +37,10 @@ public class PlayerInteraction : MonoBehaviour
 		if (crosshair)
 		{
 			ChangeCrosshairState(); 
+		}
+		if (!target && inputs.useDown)
+		{
+			inventory.RemoveCarryItem();
 		}
 	}
 

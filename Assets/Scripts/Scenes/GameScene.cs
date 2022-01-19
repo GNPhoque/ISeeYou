@@ -15,6 +15,8 @@ public class GameScene : NetworkBehaviour
 	private void Awake()
 	{
 		Instantiate(crosshairCanvas);
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
 	}
 
 	public Transform GetSpawnPoint()

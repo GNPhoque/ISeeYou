@@ -145,7 +145,7 @@ public class LobbyScene : NetworkBehaviour
 	public void LobbyStartButton()
 	{
 		StopAllCoroutines();
-		NetworkManager.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+		NetworkManager.SceneManager.LoadScene("Game 1", LoadSceneMode.Single);
 	}
 	#endregion
 

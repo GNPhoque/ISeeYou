@@ -56,6 +56,8 @@ public class Keypad : MonoBehaviour
 		camBrain.enabled = false;
 		inputsManager.enabled = false;
 		crosshair.SetActive(false);
+		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.Confined;
 		gameObject.SetActive(true);
 	}
 
@@ -138,6 +140,8 @@ public class Keypad : MonoBehaviour
 		camBrain.enabled = true;
 		inputsManager.enabled = true;
 		crosshair.SetActive(true);
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
 		gameObject.SetActive(false);
 	}
 }

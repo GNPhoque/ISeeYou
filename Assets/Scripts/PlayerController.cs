@@ -24,6 +24,10 @@ public class PlayerController : NetworkBehaviour
 	[SerializeField]
 	Rigidbody rb;
 
+	[Header("Children")]
+	[SerializeField]
+	Transform cameraSocket;
+
 	[Header("Fields")]
 	[SerializeField]
 	float spawnXRange;
@@ -58,12 +62,12 @@ public class PlayerController : NetworkBehaviour
 
 	private void SceneManager_OnLoadComplete(ulong clientId, string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
 	{
-		if (sceneName == "Game")
+		if (sceneName == "Game 1")
 		{
 			sceneManager = GameObject.FindGameObjectWithTag("SceneManager").GetComponent<NetworkBehaviour>();
 			spawnPosition = ((GameScene)sceneManager).GetSpawnPoint().position;
 			t.position = spawnPosition;
-			if (IsOwner) Camera.main.GetComponent<CinemachineVirtualCamera>().Follow = t;
+			if (IsOwner) Camera.main.GetComponent<CinemachineVirtualCamera>().Follow = cameraSocket;
 			playerInteraction.SetCrosshair();
 		}
 	}
@@ -72,7 +76,7 @@ public class PlayerController : NetworkBehaviour
 	{
 		if (IsOwner)
 		{
-			if (canMove && inputs.movement != Vector2.zero)
+			if (canMove)
 			{
 				Move();
 				RotateTowardsCameraForward();

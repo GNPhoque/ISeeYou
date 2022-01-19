@@ -21,6 +21,7 @@ public class Rotatable : Useable
 			if (state == UsableState.NotUsed)
 			{
 				state = UsableState.Using;
+				OnUsed?.Invoke();
 				t.DORotate(rotation, tweenDuration, RotateMode.LocalAxisAdd).onComplete = () =>
 				{
 					if (collided)
@@ -31,7 +32,6 @@ public class Rotatable : Useable
 					else
 					{
 						state = UsableState.Used;
-						OnUsed?.Invoke();
 					}
 				};
 			}
