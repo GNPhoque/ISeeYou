@@ -18,7 +18,7 @@ public class Carryable : Useable
 	Quaternion originalRot;
 	Vector3 originalScale;
 
-	private void Start()
+	private void Awake()
 	{
 		col = GetComponent<Collider>();
 		originalParent = transform.parent;
